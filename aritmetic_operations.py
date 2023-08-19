@@ -1,4 +1,5 @@
 from enum import Enum
+import inspect
 
 class NumbersEnum(Enum):
     """
@@ -15,50 +16,18 @@ class NumbersEnum(Enum):
     eight = 8
     nine = 9
 
-def caller_operation(param, number):
-    result = param(number)
-    return result    
+def alias(*aliases):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            caller_name = inspect.currentframe().f_back.f_code.co_name
 
-def zero(param='default'):
-    my_number = NumbersEnum.zero.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
-    
-def one(param='default'):
-    my_number = NumbersEnum.one.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
-    
-def two(param='default'):
-    my_number = NumbersEnum.two.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
+            result = func(*args, alias=caller_name, **kwargs)
+            
+            return result
         
-def three(param='default'):
-    my_number = NumbersEnum.three.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
-    
-def four(param='default'):
-    my_number = NumbersEnum.four.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
+        return wrapper
+    return decorator
 
-def five(param='default'):
-    my_number = NumbersEnum.five.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
-    
-def six(param='default'):  
-    my_number = NumbersEnum.six.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
-
-def seven(param='default'):
-    my_number = NumbersEnum.seven.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
-    
-def eight(param='default'):
-    my_number = NumbersEnum.eight.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
-        
-def nine(param='default'):
-    my_number = NumbersEnum.nine.value
-    return my_number if param == 'default' else caller_operation(param, my_number)
-        
 def plus(number):
     def wrapper(y):
         result = number + y
@@ -86,6 +55,37 @@ def divided_by(number):
         print(result)
 
     return wrapper
+
+@alias("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
+def my_function(param, *args, **kwargs):
+    my_number = NumbersEnum[kwargs.get('alias')].value
+    if param == 'default':
+        return my_number  
+    else:
+        result = param(my_number)
+        return result    
+
+def zero(param='default'):
+    return my_function(param)
+def one(param='default'):
+    return my_function(param)
+def two(param='default'):
+    return my_function(param)
+def three(param='default'):
+    return my_function(param)
+def four(param='default'):
+    return my_function(param)
+def five(param='default'):
+    return my_function(param)
+def six(param='default'):
+    return my_function(param)
+def seven(param='default'):
+    return my_function(param)
+def eight(param='default'):
+    return my_function(param)
+def nine(param='default'):
+    return my_function(param)
+
 
 if __name__ == '__main__':
     four(times(five()))
