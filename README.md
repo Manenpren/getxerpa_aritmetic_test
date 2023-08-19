@@ -1,0 +1,1 @@
+# getxerpa_aritmetic_test
